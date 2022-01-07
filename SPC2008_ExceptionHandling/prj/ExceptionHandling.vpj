@@ -1,0 +1,215 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir="../Applications/src/ExceptionHandling/">
+	<Config
+		Name="Release"
+		OutputFile=""
+		CompilerConfigName="Latest Version">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(DBLDIR)\bin\dbl" %(SYN_DBG) -XT "%p%n%e"'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw"
+				ClearProcessBuffer="1">
+				<Exec CmdLine='"%(DBLDIR)\bin\dblink" %(SYN_DBG) -o EXE:  "%n" WND:tklib.elb DBLDIR:axlib.elb'/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(DBLDIR)\bin\dbr" -d "%n"'/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(DBLDIR)\bin\dbr" EXE:"%n"'/>
+			</Target>
+			<Target
+				Name="Compile Scripts"
+				MenuCaption="Co&amp;mpile Scripts"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts Setup"
+				MenuCaption="Compile Scripts Set&amp;up..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynSetupCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Test Skeletons"
+				MenuCaption="Generate Synergy Test S&amp;keletons..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynStartSkeletonGen"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Prototypes"
+				MenuCaption="Generate Synergy Pro&amp;totypes..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGeneratePrototypes"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+	</Config>
+	<Files>
+		<Folder
+			Name="Source Files"
+			Filters="*.dbl;*.tpl">
+			<F N="../Applications/src/ExceptionHandling/AppExceptions.dbl"/>
+			<F N="../Applications/src/ExceptionHandling/application_error_processing.dbl"/>
+			<F N="../Applications/src/ExceptionHandling/basic_error_trapping.dbl"/>
+			<F N="../Applications/src/ExceptionHandling/catch_specific_errors.dbl"/>
+			<F N="../Applications/src/ExceptionHandling/try_catch.dbl"/>
+		</Folder>
+		<Folder
+			Name="Header Files"
+			Filters="*.def;*.dbh"/>
+		<Folder
+			Name="Toolkit Script Files"
+			Filters="*.wsc"/>
+		<Folder
+			Name="Other Files"
+			Filters=""/>
+	</Files>
+	<Macro>
+		<ExecMacro CmdLine="rem "/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine="rem Set this to the base folder definition"/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set SRCDEV=C"/>
+		<ExecMacro CmdLine="syn_set ROOTFOLDER=SPC2008_ExceptionHandling"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set DEVROOT=%(SRCDEV):\%(ROOTFOLDER)"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine="rem Define here the required environment variables"/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set RPSMFIL=%(DEVROOT)\rps\rpsmain.ism"/>
+		<ExecMacro CmdLine="syn_set RPSTFIL=%(DEVROOT)\rps\rpstext.ism"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set EXE=%(DEVROOT)\exe"/>
+		<ExecMacro CmdLine="syn_set OBJ=%(DEVROOT)\applications\obj\exceptionhandling"/>
+		<ExecMacro CmdLine="syn_set DATA=%(DEVROOT)\dat"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set SYNEXPDIR=%(DEVROOT)\Applications\hdr"/>
+		<ExecMacro CmdLine="syn_set SYNIMPDIR=%(DEVROOT)\Applications\hdr"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine="rem This is the drive the archives are stored in"/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set ARCHIVEDRIVE=S"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine="rem Set the mapped drive for the archives"/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set ARCHIVEMAP=\\MORRISRLAPTOP\Archive"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine="rem Defined the folder name the VM project is stored in"/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set ARCHIVENAME=PSG\PSGArchive"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine="rem set required version labels"/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set ARCHIVE_VER="/>
+		<ExecMacro CmdLine="syn_set BRANCH_VER="/>
+		<ExecMacro CmdLine="syn_set BASE_VER="/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine="rem change this depending if it's a development configuration"/>
+		<ExecMacro CmdLine="rem or a release configuration"/>
+		<ExecMacro CmdLine="rem these should be =nothing for release"/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set DFLAGS=-d"/>
+		<ExecMacro CmdLine="syn_set LDFLAGS=-d"/>
+		<ExecMacro CmdLine="syn_set VARIANT_FLAGS="/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine="rem Define version manager settings"/>
+		<ExecMacro CmdLine="rem Do not change these!!!!!"/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set VCSID=%(username)"/>
+		<ExecMacro CmdLine="syn_set DEVROOT=%(SRCDEV):\%(ROOTFOLDER)"/>
+		<ExecMacro CmdLine="syn_set N_MAKE=build -nologo"/>
+		<ExecMacro CmdLine="syn_Set LIT_END=y"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine="rem Define configuration builder settings"/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set VBEGIN=\"/>
+		<ExecMacro CmdLine="syn_set VEND=\"/>
+		<ExecMacro CmdLine="syn_set VDELIM=\"/>
+		<ExecMacro CmdLine="syn_set VCSNODE=%(ARCHIVEDRIVE):\%(ARCHIVENAME)\archives"/>
+		<ExecMacro CmdLine="syn_set OSTYPE=WINNT"/>
+		<ExecMacro CmdLine="syn_set SYSTEM_TYPE=WindowsNT"/>
+		<ExecMacro CmdLine="syn_set CONF=%(DEVROOT)\cfg\"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine="rem "/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine="rem Define here the required environment variables"/>
+		<ExecMacro CmdLine="rem *************************************************************"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set RPSMFIL=%(DEVROOT)\rps\rpsmain.ism"/>
+		<ExecMacro CmdLine="syn_set RPSTFIL=%(DEVROOT)\rps\rpstext.ism"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set EXE=%(DEVROOT)\exe"/>
+		<ExecMacro CmdLine="syn_set DATA=%(DEVROOT)\dat"/>
+		<ExecMacro CmdLine=""/>
+		<ExecMacro CmdLine="syn_set SYNEXPDIR=%(DEVROOT)\Applications\hdr"/>
+		<ExecMacro CmdLine="syn_set SYNIMPDIR=%(DEVROOT)\Applications\hdr"/>
+	</Macro>
+</Project>

@@ -1,0 +1,27 @@
+[Global]
+CurrentProject=ExceptionHandling.vpj
+[ProjectDates]
+ExceptionHandling.vpj=20080619140543773
+[ActiveConfig]
+ExceptionHandling.vpj=Release
+[TreeExpansion2]
+- ExceptionHandling.vpj
+  - Source Files
+  - Header Files
+  - Toolkit Script Files
+  - Other Files
+scroll:0
+[State]
+SCREEN: 1920 1200 64 27 1813 1087 0 0 N 0 0 0 0 1502 879 0
+CWD: ..\Applications\src\ExceptionHandling
+FILEHIST: 9
+D:\SPC2008\Applications\src\NetDemo\net_customer.dbl
+\SPC2008_NET_demo\bat\BuildIt.bat
+\SPC2008_NET_demo\setup.bat
+..\setup.bat
+..\bat\BuildIt.bat
+..\readme.txt
+\SPC2008_NET_demo\readme.txt
+..\Applications\src\ExceptionHandling\basic_error_trapping.dbl
+..\Applications\src\ExceptionHandling\makefile.mak
+TBCLASS: 0 0

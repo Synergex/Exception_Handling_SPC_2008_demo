@@ -1,0 +1,103 @@
+;;
+;;Simple demonstration of Try-Catch-Finally
+;;
+
+main
+	
+;;we are using toolkit so we can display messages
+.include "WND:tools.def"
+
+record internal_vars
+	sku				,a10
+	errorText		,a60
+endrecord
+
+proc
+	
+	onerror ($ERR_CATCH) catch_all 
+
+	;;start the toolkit so we can display message, etc
+    u_start()
+	e_sect("Try-Catch Processing", D_HEADER)
+
+	repeat
+	  begin
+
+		;;ask for a product code
+		writes(g_terminal, "")
+		writes(g_terminal, "Enter SKU : ")
+		reads(g_terminal, sku, close_down)
+
+		;;try to locate the product
+		GetProductRecord(sku)
+
+	  end
+	
+	if (0)
+	  begin
+catch_all,
+		;;general catch all error processing.  Display traceback
+		offerror
+		err_traceback(errorText)
+		u_message(errorText)
+		
+		exit
+	  end
+
+close_down,
+	;shutdown the toolkit
+	u_finish()
+	
+	;;pogram end
+	stop
+	
+endmain
+
+subroutine GetProductRecord
+	in		req		SKUCode		,a10
+	;;end of argument lsit
+
+.include "product" repository, record = "product"
+
+record internal_vars
+	chan			,D_NATINT
+endrecord
+
+proc
+
+	init internal_vars
+
+	;;try an operations
+	try 
+	  begin
+
+		;;try to open the file
+		open(chan = syn_freechn(), "u:i", "DATA:product.ism")
+
+		;;channel opened
+		;;can we find the record
+		read(chan, product, SKUCode)
+
+		;;display the results
+		u_message("Record found , " + product.description)
+	  end
+	
+	;;catch the errors 
+	catch (e, @System.Exception)
+	  begin
+		;;the e object only has scope within this begin-end block
+		;;display the message
+		u_message("We have trapped and error, it is : " + e.Message)
+	  end
+
+	;;always process the finally code, regardless of any errors
+	finally
+	  begin
+		;;close up channels, if open
+		if (chan && chopen(chan)) close(chan)
+	  end
+	endtry
+
+	xreturn
+	
+endsubroutine

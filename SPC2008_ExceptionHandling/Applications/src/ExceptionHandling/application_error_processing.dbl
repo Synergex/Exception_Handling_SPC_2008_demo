@@ -1,0 +1,137 @@
+import AppExceptions
+
+;;
+;;Defining and throwing applicaiton defined exceptions
+;;
+
+main
+	
+.include "WND:tools.def"
+
+record internal_vars
+	sku				,a10
+	errorText		,a60
+endrecord
+
+proc
+	
+	repeat
+	  begin
+		try 
+		  begin
+			;;start the toolkit so we can display message, etc
+			u_start()
+	
+			;;ask for a product code
+			writes(g_terminal, "")
+			writes(g_terminal, "Enter SKU : ")
+			reads(g_terminal, sku, eof)
+	
+			;;try to locate the product
+			GetProductRecord(sku)
+		  end
+		catch (e, @ProductObsolete)
+		  begin
+			;;we get display more information using exception classes
+			data msg, a100
+			s_bld(msg,, "%a on %a", e.Message, e.ExpiredDate)
+			u_message(msg)
+		  end
+		catch (e, @ProductNotFound)
+		  begin
+			data msg, a100
+			s_bld(msg,, "%a on %a", e.Message, e.ProductCode)
+			u_message(msg)
+		  end
+		catch (e)
+		  begin
+			u_message(e.Message)
+			exitloop	;;we can not continue
+		  end
+		finally
+		  begin
+			;shutdown the toolkit
+			u_finish()		
+		  end
+		endtry
+	end
+eof,
+	
+	;;pogram end
+	stop
+	
+endmain
+
+subroutine GetProductRecord
+	in		req		SKUCode		,a10
+	;;end of argument lsit
+
+.include "product" repository, record = "product"
+
+record internal_vars
+	chan			,D_NATINT
+	checkKey		,d10
+endrecord
+
+proc
+
+	init internal_vars
+
+	;;try an operations
+	try 
+	  begin
+
+		;;try to open the file
+		open(chan = syn_freechn(), "u:i", "DATA:product.ism")
+
+		;;channel opened
+
+		;;check the key is decimal
+		checkKey = SKUCode
+
+		;;can we find the record
+		read(chan, product, SKUCode)
+
+		;;check the product expire date, throw an exception if expired
+		throw new ProductObsolete(20080101)
+		
+	  end
+	
+	;;catch the errors 
+	;;note that the "e" variable only has scope for each begin-end block
+	;;note also that the order of the catch blocks is important
+	catch (e, @EndOfFileException)
+	  begin
+		throw new ProductNotFound(SKUCode)
+	  end
+
+	catch (e, @KeyNotSameException)
+	  begin
+		throw new ProductNotFound(SKUCode)
+	  end
+
+	catch (e, @RecordLockedException)
+	  begin
+		throw new ProductNotFound(SKUCode)
+	  end
+
+	;;this final catch block will catch all other unhandled exceptions
+	;;throw it to the calling program
+	catch (e)
+	  begin
+		throw 
+	  end
+
+	;;always process the finally code, regardless of any errors
+	finally
+	  begin
+		;;close up channels, if open
+		if (chopen(chan)) close(chan)
+
+	  end
+	endtry
+
+	xreturn
+	
+endsubroutine
+

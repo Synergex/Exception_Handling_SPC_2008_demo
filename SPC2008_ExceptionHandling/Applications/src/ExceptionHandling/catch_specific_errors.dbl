@@ -1,0 +1,129 @@
+
+;;
+;;Demonstration of catching specific errors
+;;in a try-catch block
+;;
+
+main
+	
+;;we are using toolkit so we can display messages
+.include "WND:tools.def"
+
+record internal_vars
+	sku				,a10
+	errorText		,a60
+endrecord
+
+proc
+	
+	try 
+	  begin
+		;;start the toolkit so we can display message, etc
+		u_start()
+		e_sect("Catch Specific Erros", D_HEADER)
+
+		repeat
+		  begin
+
+			;;ask for a product code
+			writes(g_terminal, "")
+			writes(g_terminal, "Enter SKU : ")
+			reads(g_terminal, sku, eof)
+
+			;;try to locate the product
+			GetProductRecord(sku)
+		  end
+eof,
+	  end
+	catch (e)
+	  begin
+		u_message(e.Message)
+	  end
+	finally
+	  begin
+		;shutdown the toolkit
+		u_finish()		
+	  end
+	endtry
+	
+	;;pogram end
+	stop
+	
+endmain
+
+subroutine GetProductRecord
+	in		req		SKUCode		,a10
+	;;end of argument lsit
+
+.include "product" repository, record = "product"
+
+record internal_vars
+	chan			,D_NATINT
+	checkKey		,d10
+endrecord
+
+proc
+
+	init internal_vars
+
+	;;try an operations
+	try 
+	  begin
+
+		;;try to open the file
+		open(chan = syn_freechn(), "u:i", "DATA:product.ism")
+
+		;;channel opened
+
+		;;can we find the record
+		read(chan, product, SKUCode)
+
+		;;display the results
+		u_message("Record found , " + product.description)
+	  end
+	
+	;;catch the errors 
+	;;note that the "e" variable only has scope for each begin-end block
+	;;note also that the order o the catch blocks is important
+
+	catch (e, @KeyNotSameException)
+	  begin
+		u_message("The key can not be found")
+	  end
+
+	catch (e, @EndOfFileException)
+	  begin
+		u_message("End of file reached, record can not be found")
+	  end
+
+	catch (e, @RecordLockedException)
+	  begin
+		u_message("Record is locked")
+	  end
+
+	;;generic file IO exceptions
+	catch (e, @FileIOException)
+	  begin
+		u_message(e.Message)
+	  end
+
+	;;this final catch block will catch all other unhandled exceptions
+	catch (e, @SynException)
+	  begin
+		data msg, a100
+		s_bld(msg,, "Error :%d, %a", e.Errno, e.Message)
+		u_message(msg)
+	  end
+
+	;;always process the finally code, regardless of any errors
+	finally
+	  begin
+		;;close up channels, if open
+		if (chan && chopen(chan)) close(chan)
+	  end
+	endtry
+
+	xreturn
+		
+endsubroutine
+

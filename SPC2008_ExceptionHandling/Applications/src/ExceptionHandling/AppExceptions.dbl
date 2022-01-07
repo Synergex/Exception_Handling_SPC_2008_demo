@@ -1,0 +1,61 @@
+;;
+;; first define te required exception classes
+;;
+namespace AppExceptions
+
+;;product obsolete class
+public class ProductObsolete extends System.ApplicationException
+	
+	;;internal members
+	private record 
+		mReversedDate		,d8
+		mYear				,a4@mReversedDate
+		mMonth				,a2@mReversedDate + 4
+		mDay				,a2@mReversedDate + 6
+	endrecord
+	private const mMessage	,a*	,"The product was obsolete."
+	
+	;;constructor
+	public method ProductObsolete
+		in		req	ExpireDate,	d
+		parent(mMessage)	;;call the base constructor
+	proc
+		mReversedDate = ExpireDate
+	endmethod
+	
+	;;public read only property to retreive expire date
+	public property ExpiredDate ,@String
+		method get
+		proc
+			mreturn (String)(mDay + "/" + mMonth + "/" + mYear )
+		endmethod
+	endproperty
+	
+endclass
+	
+;;product not found class
+public class ProductNotFound extends System.ApplicationException
+	
+	;;internal members
+	private const mMessage	,a*	,"The product can not be found."
+	private mProductCode	,a10
+	
+	;;constructor
+	public method ProductNotFound
+		in		req	ProductCode	,a
+		parent(mMessage)		;;call the base constructor
+	proc
+		mProductCode = ProductCode
+	endmethod
+	
+	public property ProductCode	,a
+		method get
+		proc
+			mreturn mProductCode
+		endmethod
+	endproperty
+	
+endclass
+
+endnamespace
+

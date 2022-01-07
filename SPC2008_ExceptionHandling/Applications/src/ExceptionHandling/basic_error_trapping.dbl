@@ -1,0 +1,132 @@
+
+;;
+;; Basic error trapping in Synergy
+;;
+
+main
+
+;;we are using toolkit so we can display messages
+.include "WND:tools.def"
+	
+record internal_vars
+	sku				,a10
+	errorText		,a60
+endrecord
+	
+proc
+	
+	init internal_vars
+	
+	;;set application error trapping
+	onerror ($ERR_CATCH) catch_all 
+	
+	;;start toolkit
+	u_start()
+	e_sect("Basic Error Trapping", D_HEADER)
+	
+	repeat
+	  begin
+		
+		;;ask for a product code
+		writes(g_terminal, "")
+		writes(g_terminal, "Enter SKU : ")
+		reads(g_terminal, sku, close_down)
+
+		;;try to locate the product
+		GetProductRecord(sku)
+		
+	  end
+		
+	if (0)
+	  begin
+catch_all,
+		;;general catch all error processing.  Display traceback
+		offerror
+		err_traceback(errorText)
+		u_message(errorText)
+		
+		;;problem here is that if routines have opened files, etc, then
+		;;they will still be open here.
+		
+		exit
+		
+	  end
+	
+close_down,
+	u_finish()
+	stop
+		
+endmain
+
+;;*****************************************************************************
+
+subroutine GetProductRecord
+	in		req		SKUCode		,a10
+	;;end of argument lsit
+
+.include "product" repository, record = "product"
+
+record internal_vars
+	chan			,D_NATINT
+	errorNumber		,D_NATINT
+	errorText		,a50
+	errorMessage	,a60
+endrecord
+
+proc
+
+	init internal_vars
+	
+	;;trap file errors
+	onerror ($ERR_FNF, $ERR_ILLCHN, $ERR_FINUSE, $ERR_PROTEC) catch_file_error
+
+	;;try to open the file
+	open(chan = syn_freechn(), "u:i", "DATA:product.ism")
+
+	;;channel opened	
+	;;can we find the record
+	offerror
+	read(chan, product, SKUCode) [KEY=not_found,
+	&	LOCK=locked, EOF=not_found, ERR=catch_error]
+
+	;;display the results.  we only get here if successful!
+	
+	u_message("Record found , " + product.description)
+	
+	;;close the channel
+	close(chan)
+
+	;;below is the error trapping code
+	if (0)
+	  begin
+not_found,
+
+		u_message("Record can not be found")
+
+		exit
+
+locked,
+
+		u_message("Record locked")
+
+		exit
+
+catch_error,
+catch_file_error,
+		offerror
+		;;get error details
+		errorNumber = ernum()
+		ertxt(errorNumber, errorText)
+		s_bld(errorMessage,, "Error : %d, Description: %a", errorNumber, errorText)
+		u_message(errorMessage)
+
+		exit
+
+	  end
+	
+	if (chan && chopen(chan)) 
+		close(chan)
+
+	xreturn
+	
+endsubroutine
